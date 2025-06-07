@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aplikasi Manajemen Voting Berbasis Blockchain - Ditingkatkan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    /* Palet Warna Cerah, Soft, dan Elegan */
+    --primary-color: #5D8BF4; 
+    --primary-hover-color: #4A70D4; 
+    --primary-color-rgb: 93, 139, 244; 
+    
+    --background-color: #f8f9fa; 
+    --surface-color: #ffffff;   
+    
+    --text-color: #2c3e50; 
+    --text-muted-color: #7f8c8d; 
+    
+    --border-color: #e0e6ed; 
+    
+    --success-color: #4CAF50; 
+    --success-color-rgb: 76, 175, 80;
+    --error-color: #F44336;   
+    --error-color-rgb: 244, 67, 54;
+
+    --font-family: 'Poppins', sans-serif;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: var(--font-family);
+    /* Latar belakang utama dengan pola blockchain yang soft */
+    background-color: var(--background-color); 
+    background-image:
+      linear-gradient(rgba(var(--primary-color-rgb), 0.04) 1px, transparent 1px), /* Garis horizontal sangat halus */
+      linear-gradient(90deg, rgba(var(--primary-color-rgb), 0.04) 1px, transparent 1px); /* Garis vertikal sangat halus */
+    background-size: 40px 40px; /* Ukuran kotak grid dari pola garis */
+    
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  header {
+    background: var(--surface-color); 
+    padding: 1.5rem 2rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 2rem;
+    letter-spacing: 0.08em;
+    color: var(--primary-color); 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); 
+    border-bottom: 2px solid var(--primary-color);
+    position: relative; /* Agar bayangan tidak tertimpa pola body jika ada overlap */
+    z-index: 10;
+  }
+
+  main {
+    flex-grow: 1;
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 2rem auto;
+    width: 100%;
+  }
+
+  section {
+    background: var(--surface-color); 
+    border-radius: var(--border-radius);
+    padding: 2rem 2.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow: var(--box-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative; /* Agar bayangan tidak tertimpa pola body */
+    z-index: 1;
+  }
+
+  section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1); 
+  }
+
+  h2 {
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.6rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 1.6rem;
+  }
+
+  label {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 0.6rem;
+    color: var(--text-muted-color);
+  }
+
+  input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: var(--border-radius);
+    border: 1.5px solid var(--border-color);
+    background: #fdfdfd; 
+    color: var(--text-color);
+    margin-bottom: 1.2rem;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    font-family: var(--font-family);
+  }
+
+  input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: var(--surface-color); 
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2); 
+  }
+
+  button {
+    background: var(--primary-color);
+    border: none;
+    padding: 0.8rem 1.8rem;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.2s ease;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  button:disabled {
+    background: #b0bec5; 
+    color: #607d8b;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  button:hover:not(:disabled) {
+    background: var(--primary-hover-color);
+    transform: translateY(-2px);
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  li {
+    background: #f7f9fc; 
+    border-radius: var(--border-radius);
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color); 
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  li:hover {
+    background-color: var(--surface-color);
+    border-color: var(--primary-color);
+  }
+
+  li strong {
+    color: var(--primary-color);
+    font-weight: 600;
+  }
+
+  .block {
+    background: var(--surface-color);
+    border-left: 6px solid var(--primary-color);
+    margin-bottom: 1.5rem;
+    padding: 1.2rem 1.6rem;
+    border-radius: var(--border-radius);
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
+    opacity: 0; 
+    animation: fadeInBlock 0.5s ease forwards;
+  }
+
+  @keyframes fadeInBlock {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .block-header {
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+  }
+  .block div {
+    margin-bottom: 0.4rem;
+    word-break: break-all;
+  }
+  .block div strong {
+    color: var(--text-muted-color); 
+    font-weight: 500;
+  }
+
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted-color);
+    background: var(--background-color); /* Footer juga menggunakan background dasar */
+    border-top: 1px solid var(--border-color); 
+    margin-top: 2rem;
+    position: relative; /* Agar tidak tertimpa pola body */
+    z-index: 10;
+  }
+
+  .message {
+    padding: 0.8rem 1rem;
+    margin-top: 1rem;
+    border-radius: var(--border-radius);
+    font-size: 0.95rem;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out;
+    height: 0;
+    overflow: hidden;
+  }
+  .message.show {
+    opacity: 1;
+    height: auto;
+  }
+  .message.success {
+    background-color: rgba(var(--success-color-rgb), 0.15); 
+    color: var(--success-color);
+    border: 1px solid rgba(var(--success-color-rgb), 0.3);
+  }
+  .message.error {
+    background-color: rgba(var(--error-color-rgb), 0.15); 
+    color: var(--error-color);
+    border: 1px solid rgba(var(--error-color-rgb), 0.3);
+  }
+
+
+  @media(max-width: 768px) {
+    .grid-2 {
+      grid-template-columns: 1fr;
+    }
+    header {
+      font-size: 1.5rem;
+      padding: 1rem;
+    }
+    main {
+      padding: 1rem;
+      margin: 1rem auto;
+    }
+    section {
+      padding: 1.5rem;
+    }
+    h2 {
+      font-size: 1.4rem;
+    }
+    body { /* Ukuran grid pada mobile bisa disesuaikan jika dirasa terlalu ramai */
+        background-size: 30px 30px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  Manajemen Voting Berbasis Blockchain
+</header>
+
+<main>
+  <section>
+    <h2>Tambah Kandidat</h2>
+    <form id="candidate-form">
+      <label for="candidate-name">Nama Kandidat</label>
+      <input type="text" id="candidate-name" placeholder="Masukkan nama kandidat" required />
+      <button type="submit">Tambah Kandidat</button>
+    </form>
+    <div id="candidate-message" class="message"></div>
+  </section>
+
+  <div class="grid-2">
+    <section>
+      <h2>Berikan Suara</h2>
+      <form id="vote-form">
+        <label for="nik">NIK Anda</label>
+        <input type="text" id="nik-input" placeholder="Masukkan NIK unik Anda" required />
+        
+        <label for="candidate-select">Pilih Kandidat</label>
+        <select id="candidate-select" required disabled>
+          <option value="" disabled selected>Tidak ada kandidat tersedia</option>
+        </select>
+        
+        <button type="submit" id="vote-button" disabled>Kirim Suara</button>
+      </form>
+      <div id="vote-message" class="message"></div>
+    </section>
+
+    <section>
+      <h2>Hasil Saat Ini</h2>
+      <ul id="results-list">
+        </ul>
+    </section>
+  </section>
+
+  <section>
+    <h2>Buku Besar Blockchain</h2>
+    <div id="blockchain-visual">
+      </div>
+  </section>
+</main>
+
+<footer>
+  &copy; 2024 Demo Manajemen Voting Berbasis Blockchain - Ditingkatkan
+</footer>
+
+<script>
+  (() => {
+    // State
+    const candidates = [];
+    const votes = {}; // namaKandidat: jumlahSuara
+    const blockchain = [];
+    let messageTimeout = null;
+
+    // Elements
+    const candidateForm = document.getElementById('candidate-form');
+    const candidateNameInput = document.getElementById('candidate-name');
+    const candidateMessage = document.getElementById('candidate-message');
+
+    const voteForm = document.getElementById('vote-form');
+    const nikInput = document.getElementById('nik-input'); 
+    const candidateSelect = document.getElementById('candidate-select');
+    const voteButton = document.getElementById('vote-button');
+    const voteMessage = document.getElementById('vote-message');
+
+    const resultsList = document.getElementById('results-list');
+    const blockchainVisual = document.getElementById('blockchain-visual');
+
+    // --- Utility Functions ---
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function displayMessage(element, text, type = 'success', duration = 3000) {
+      element.textContent = text;
+      element.className = `message ${type} show`; 
+      
+      if (messageTimeout) clearTimeout(messageTimeout);
+
+      if (duration > 0) {
+        messageTimeout = setTimeout(() => {
+          element.classList.remove('show');
+           setTimeout(() => { 
+             if (!element.classList.contains('show')) {
+                element.textContent = '';
+                element.className = 'message';
+             }
+           }, 300); 
+        }, duration);
+      }
+    }
+
+    // --- Blockchain Core ---
+    async function createGenesisBlock() {
+      const block = {
+        index: 0,
+        timestamp: Date.now(),
+        data: 'Blok Genesis',
+        previousHash: '0'.repeat(64),
+        hash: ''
+      };
+      block.hash = await calculateHash(block);
+      blockchain.push(block);
+      renderBlockchain();
+    }
+
+    async function calculateHash(block) {
+      const blockString = `${block.index}${block.timestamp}${JSON.stringify(block.data)}${block.previousHash}`;
+      return await sha256(blockString);
+    }
+
+    async function addBlock(data) {
+      const previousBlock = blockchain[blockchain.length - 1];
+      const newBlock = {
+        index: previousBlock.index + 1,
+        timestamp: Date.now(),
+        data,
+        previousHash: previousBlock.hash,
+        hash: ''
+      };
+      newBlock.hash = await calculateHash(newBlock);
+      blockchain.push(newBlock);
+      renderBlockchain();
+    }
+
+    // --- Rendering Functions ---
+    function renderCandidates() {
+      candidateSelect.innerHTML = ''; 
+      if (candidates.length === 0) {
+        const option = document.createElement('option');
+        option.value = "";
+        option.textContent = "Tidak ada kandidat tersedia";
+        option.disabled = true;
+        option.selected = true;
+        candidateSelect.appendChild(option);
+        candidateSelect.disabled = true;
+        voteButton.disabled = true;
+      } else {
+        const placeholderOption = document.createElement('option');
+        placeholderOption.value = "";
+        placeholderOption.textContent = "Pilih seorang kandidat";
+        placeholderOption.disabled = true;
+        placeholderOption.selected = true;
+        candidateSelect.appendChild(placeholderOption);
+
+        candidates.forEach(c => {
+          const option = document.createElement('option');
+          option.value = c;
+          option.textContent = c;
+          candidateSelect.appendChild(option);
+        });
+        candidateSelect.disabled = false;
+        voteButton.disabled = false;
+      }
+    }
+
+    function renderResults() {
+      resultsList.innerHTML = '';
+      if (candidates.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = 'Belum ada kandidat ditambahkan. Tambah kandidat untuk melihat hasil.';
+        resultsList.appendChild(li);
+        return;
+      }
+      candidates.sort((a,b) => (votes[b] || 0) - (votes[a] || 0)).forEach(c => {
+        const voteCount = votes[c] || 0;
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${c}</strong> - ${voteCount} suara`;
+        resultsList.appendChild(li);
+      });
+    }
+
+    function renderBlockchain() {
+      blockchainVisual.innerHTML = ''; 
+      blockchain.slice().reverse().forEach((block, idx) => {
+        const div = document.createElement('div');
+        div.classList.add('block');
+        
+        div.innerHTML = `
+          <div class="block-header">Blok #${block.index}</div>
+          <div><strong>Timestamp:</strong> ${new Date(block.timestamp).toLocaleString('id-ID')}</div>
+          <div><strong>Data:</strong> ${typeof block.data === 'string' ? block.data : JSON.stringify(block.data, null, 2)}</div>
+          <div><strong>Hash Sebelumnya:</strong> ${block.previousHash.substring(0,20)}...</div>
+          <div><strong>Hash:</strong> ${block.hash.substring(0,20)}...</div>
+        `;
+        blockchainVisual.appendChild(div);
+      });
+    }
+
+    // --- Event Handlers ---
+    candidateForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = candidateNameInput.value.trim();
+      if (!name) {
+        displayMessage(candidateMessage, 'Nama kandidat tidak boleh kosong.', 'error');
+        return;
+      }
+      if (candidates.includes(name)) {
+        displayMessage(candidateMessage, `Kandidat "${name}" sudah ada.`, 'error');
+        return;
+      }
+      candidates.push(name);
+      votes[name] = 0; 
+      candidateNameInput.value = '';
+      displayMessage(candidateMessage, `Kandidat "${name}" berhasil ditambahkan.`, 'success');
+      renderCandidates();
+      renderResults();
+    });
+
+    voteForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const nik = nikInput.value.trim(); 
+      const candidateName = candidateSelect.value;
+
+      if (!nik) { 
+        displayMessage(voteMessage, 'Mohon masukkan NIK Anda.', 'error');
+        return;
+      }
+      if (!candidateName) {
+        displayMessage(voteMessage, 'Mohon pilih kandidat yang akan divote.', 'error');
+        return;
+      }
+
+      const alreadyVoted = blockchain.some(block => 
+        block.index > 0 && block.data && block.data.nik === nik 
+      );
+
+      if (alreadyVoted) {
+        displayMessage(voteMessage, 'Anda sudah memberikan suara. Suara ganda tidak diizinkan.', 'error');
+        return;
+      }
+
+      voteButton.disabled = true;
+      voteButton.textContent = 'Memproses Suara...';
+
+      try {
+        const voteData = { nik, candidate: candidateName, timestamp: Date.now() }; 
+        await addBlock(voteData); 
+
+        votes[candidateName] = (votes[candidateName] || 0) + 1;
+        
+        nikInput.value = ''; 
+        candidateSelect.selectedIndex = 0; 
+        displayMessage(voteMessage, `Suara untuk "${candidateName}" berhasil dicatat!`, 'success');
+        renderResults(); 
+      } catch (error) {
+        console.error("Error saat mengirim suara:", error);
+        displayMessage(voteMessage, 'Terjadi kesalahan saat mengirim suara Anda. Silakan coba lagi.', 'error');
+      } finally {
+        voteButton.disabled = false;
+        voteButton.textContent = 'Kirim Suara';
+      }
+    });
+
+    // --- Initial Setup ---
+    async function initializeApp() {
+      await createGenesisBlock();
+      renderCandidates(); 
+      renderResults();
+    }
+
+    initializeApp();
+
+  })();
+</script>
+</body>
+</html>
